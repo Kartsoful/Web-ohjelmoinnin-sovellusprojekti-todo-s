@@ -1,9 +1,10 @@
 import { pool } from '../helper/db.js'
 import { Router } from 'express'
+import { auth } from '../helper/auth.js'
 
 const router = Router()
 
-router.get("/tasks", (req, res, next) => {
+router.get("/", (req, res, next) => {
     pool.query("SELECT * FROM task", (err, result) => {
         if (err) {
             return next (err)
@@ -12,7 +13,7 @@ router.get("/tasks", (req, res, next) => {
     })
 })
 
-router.post('/tasks', (req, res, next) => {
+router.post('/', auth, (req, res, next) => {
     const { task } = req.body
     if (!task) {
         return res.status(400).json({ error: 'Task is required' })
@@ -29,7 +30,7 @@ router.post('/tasks', (req, res, next) => {
     )
 })
 
-router.delete('/tasks/:id', (req, res, next) => {
+router.delete('/:id', auth, (req, res, next) => {
     const { id } = req.params
     console.log(`Deleting task with id ${id}`)
     pool.query('delete from task WHERE id = $1',

@@ -10,6 +10,8 @@ const __dirname = import.meta.dirname
 const initializeTestDb = async () => {
     const sql = await fs.readFile(path.resolve(__dirname, '../db.sql'), 'utf8')
     await pool.query(sql)
+    const result = await pool.query('SELECT * FROM account')
+    console.log('AFTER RESET: ', result.rows)
 }
 
 const insertTestUser =  async (user) => {

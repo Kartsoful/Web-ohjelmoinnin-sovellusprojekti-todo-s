@@ -1,14 +1,15 @@
 import "./App.css";
 import Row from "./components/Row";
 import { useState,useEffect } from "react";
+import { useUser } from './context/useUser';
 import axios from "axios";
 
 const apiUrl = "http://localhost:3001";
 
 function App() {
-  
-  const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]);
+  const [task, setTask] = useState("")
+  const [tasks, setTasks] = useState([])
+  const { user } = useUser()
 
   useEffect(() => {
     axios
@@ -23,11 +24,12 @@ function App() {
 
   const addTask = (e) => {
     e.preventDefault();
-    const newtask = { description: task };
+    const headers = {headers: {Authorization: `Bearer ${user.token}`}}
+    const newTask = { description: task };
     axios
-      .post(`${apiUrl}/tasks`, { task: newtask })
-      .then((response) => {
-        setTasks((currentTasks) => [...currentTasks, response.data]);
+      .post(`${apiUrl}/tasks`, { task: newTask }, headers)
+      .then(response => {
+        setTasks(currentTasks => [...currentTasks, response.data]);
         setTask("");
       })
       .catch((error) => {
@@ -36,11 +38,12 @@ function App() {
   };
 
   const deleteTask = (deleted) => {
+    const headers = {headers: {Authorization: `Bearer ${user.token}`}}
     axios
-      .delete(`${apiUrl}/tasks/${deleted}`)
-      .then((response) => {
-        setTasks((currentTasks) =>
-          currentTasks.filter((item) => item.id !== deleted),
+      .delete(`${apiUrl}/tasks/${deleted}`, headers)
+      .then(response => {
+        setTasks(currentTasks =>
+          currentTasks.filter(item => item.id !== deleted),
         );
       })
       .catch((error) => {
@@ -55,7 +58,7 @@ function App() {
         <input
           placeholder="Add new task"
           value={task}
-          onChange={(event) => setTask(event.target.value)}
+          onChange={event => setTask(event.target.value)}
         />
       </form>
       <ul> 

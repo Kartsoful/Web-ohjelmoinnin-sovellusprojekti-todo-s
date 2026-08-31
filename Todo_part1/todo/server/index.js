@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use('/tasks', todoRouter)
-app.use('/users',userRouter)
+app.use('/users', userRouter)
 
 app.use((err,req,res,next) => {
   const statusCode = err.status || 500

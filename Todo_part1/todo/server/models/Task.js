@@ -5,9 +5,7 @@ const selectAllTasks = async () => {
 }
 
 const insertTask = async (description) => {
-    return await pool.query('insert into task (description) values ($1) returning *',
-        [description]
-    )
+    return await pool.query('insert into task (description) values ($1) returning *', [description])
 }
 
 export { selectAllTasks, insertTask }

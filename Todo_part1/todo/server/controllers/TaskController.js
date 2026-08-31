@@ -11,16 +11,14 @@ const getTasks = async (req, res,next) => {
 
 const createTask = async (req, res, next) => {
     try {
-        if (!task || !task.description || task.description.trim().length === 0) {
+        const description = req.body.task?.description?.trim()
+        if (!description) {
             const error = new Error('Task description is required')
             error.status = 400
             return next(error)
-            
         }
-
         const result = await insertTask(description)
         return res.status(201).json(result.rows[0])
-
     } catch (error) {
         return next(error)
     }

@@ -1,13 +1,12 @@
-import { pool } from '../helper/db.js'
 import { auth } from '../helper/auth.js'
 import { Router } from 'express'
-import { getTasks, createTask } from '../controllers/TaskController.js'
+import { getTasks, createTask, deleteTask } from '../controllers/TaskController.js'
 
 const router = Router()
 
 router.get('/', getTasks)
 router.post('/', auth, createTask)
-
+router.delete('/:id', auth, deleteTask)
 
 /*
 router.get("/", (req, res, next) => {
@@ -35,7 +34,7 @@ router.post('/', auth, (req, res, next) => {
         }
     )
 })
-*/
+
 
 router.delete('/:id', auth, (req, res, next) => {
     const { id } = req.params
@@ -54,5 +53,6 @@ router.delete('/:id', auth, (req, res, next) => {
         }
     )
 })
+*/
 
 export default router

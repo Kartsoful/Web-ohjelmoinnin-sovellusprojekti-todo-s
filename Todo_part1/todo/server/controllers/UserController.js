@@ -1,35 +1,26 @@
-import { Router } from 'express'
-import { signUp, signIn } from '../controllers/UserController.js'
+import { compare, hash } from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import { insertUser, getUser } from "../models/User.js";
+import { ApiError } from "../helper/ApiError.js";
 
-const router = Router()
+const { sign } = jwt
 
-router.post('/signup', signUp)
-router.post('/signin', signIn)
-
-
-/*
-router.post('/signup', async (req, res, next) => {
+const signUp = async (req, res, next) => {
     try {
         const email = req.body.user?.email?.trim().toLowerCase()
         const password = req.body.user?.password
         if (!email || !password) {
-            const error = new Error('Email and password are required')
-            error.status = 400
-            return next(error)
+            return next(new ApiError('Email and password are required', 400))
         }
         const hashedPassword = await hash(password, 10)
-        const result = await pool.query(
-            'INSERT INTO account (email, password) VALUES ($1,$2) RETURNING id, email',
-            [email, hashedPassword],
-        )
+        const result = await insertUser(email, hashedPassword)
         return res.status(201).json(result.rows[0])
     } catch (error) {
         return next(error)
     }
-})
+}
 
-
-router.post('/signin', async (req, res, next) => {
+const signIn = async (req, res, next) => {
     try {
         const email = req.body.user?.email?.trim().toLowerCase()
         const password = req.body.user?.password
@@ -39,10 +30,7 @@ router.post('/signin', async (req, res, next) => {
             return next(error)
         }
 
-        const result = await pool.query(
-            'SELECT id, email, password FROM account WHERE email = $1',
-            [email],
-        )
+        const result = await getUser(email)
 
         const dbUser = result.rows[0]
         if (!dbUser || !(await compare(password, dbUser.password))) {
@@ -61,7 +49,6 @@ router.post('/signin', async (req, res, next) => {
     } catch (error) {
         return next(error)
     }
-})
-*/
+}
 
-export default router
+export { signUp, signIn }
